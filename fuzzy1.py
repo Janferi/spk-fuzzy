@@ -6,59 +6,64 @@ from tkinter import ttk
 import matplotlib.pyplot as plt
 
 #define semesta fuzzy
-popularitas = ctrl.Antecedent(np.arange(0, 11, 1), 'popularitas') #ini ganti apa aja bisa soalnya ini kaya kriteria buat fuzzy gitu (itu di np. arrange ada yang (0, 11, 1 itu artinya dari 0 sampe 10, 1 itu jaraknya))
-stabilitas = ctrl.Antecedent(np.arange(0, 11, 1), 'stabilitas') #ini hampir sama kaya atas itu loh
+popularitas = ctrl.Antecedent(np.arange(0, 10, 1), 'popularitas') #ini ganti apa aja bisa soalnya ini kaya kriteria buat fuzzy gitu (itu di np. arrange ada yang (0, 11, 1 itu artinya dari 0 sampe 10, 1 itu jaraknya))
+stabilitas = ctrl.Antecedent(np.arange(0, 10, 1), 'stabilitas') #ini hampir sama kaya atas itu loh
 potensi_keuntungan = ctrl.Antecedent(np.arange(0, 11, 1), 'potensi_keuntungan') #ini juga sama kaya atas itu loh
-keputusan_investasi = ctrl.Consequent(np.arange(0, 11, 1), 'keputusan_investasi') #ini juga sama kaya atas itu loh ini kayanya buat definisi variable hasil dari hitung hitungannya
+keputusan_investasi = ctrl.Consequent(np.arange(0, 10, 1), 'keputusan_investasi') #ini juga sama kaya atas itu loh ini kayanya buat definisi variable hasil dari hitung hitungannya
 
 # Define fuzzy membership functions
-popularitas['low'] = fuzz.trimf(popularitas.universe, [0, 0, 5]) #ini membership functionnya si popularitas, trimf itu membership functionnya itu triangle, popularitas.universe itu semesta dari popularitas, [0, 0, 5] itu nilai dari membership functionnya
-popularitas['medium'] = fuzz.trimf(popularitas.universe, [0, 5, 10]) 
-popularitas['high'] = fuzz.trimf(popularitas.universe, [5, 10, 10]) 
-
+popularitas['rendah'] = fuzz.trimf(popularitas.universe, [0, 1.5, 3])  #ini membership functionnya si popularitas, trimf itu membership functionnya itu triangle, popularitas.universe itu semesta dari popularitas, [0, 0, 5] itu nilai dari membership functionnya
+popularitas['sedang'] = fuzz.trimf(popularitas.universe, [4, 5.5, 6]) 
+popularitas['tinggi'] = fuzz.trimf(popularitas.universe, [7, 8.5, 10]) 
 
 #membership functionnya si stabilitas
-stabilitas['low'] = fuzz.trimf(stabilitas.universe, [0, 0, 5]) 
-stabilitas['medium'] = fuzz.trimf(stabilitas.universe, [0, 5, 10]) 
-stabilitas['high'] = fuzz.trimf(stabilitas.universe, [5, 10, 10]) 
+stabilitas['tidak'] = fuzz.trimf(stabilitas.universe, [0, 1.5, 3]) 
+stabilitas['sedang'] = fuzz.trimf(stabilitas.universe, [4, 5.5, 6]) 
+stabilitas['sangat'] = fuzz.trimf(stabilitas.universe, [7, 8.5, 10]) 
 
-potensi_keuntungan['low'] = fuzz.trimf(potensi_keuntungan.universe, [0, 0, 5]) 
-potensi_keuntungan['medium'] = fuzz.trimf(potensi_keuntungan.universe, [0, 5, 10]) 
-potensi_keuntungan['high'] = fuzz.trimf(potensi_keuntungan.universe, [5, 10, 10]) 
+#membership functionnya si potential gain
+potensi_keuntungan['dikit'] = fuzz.trimf(potensi_keuntungan.universe, [0, 1.5, 3])  
+potensi_keuntungan['sedang'] = fuzz.trimf(potensi_keuntungan.universe, [4, 5.5, 6]) 
+potensi_keuntungan['banyak'] = fuzz.trimf(potensi_keuntungan.universe, [7, 8.5, 10]) 
 
-keputusan_investasi['not_recommended'] = fuzz.trimf(keputusan_investasi.universe, [0, 0, 5]) 
-keputusan_investasi['recommended'] = fuzz.trimf(keputusan_investasi.universe, [0, 5, 10]) 
-keputusan_investasi['highly_recommended'] = fuzz.trimf(keputusan_investasi.universe, [5, 10, 10]) 
+#membership functionnya si investment decision
+keputusan_investasi['tidak_rekomen'] = fuzz.trimf(keputusan_investasi.universe, [0, 1.5, 3])  
+keputusan_investasi['rekomen'] = fuzz.trimf(keputusan_investasi.universe, [4, 5.5, 6]) 
+keputusan_investasi['sangat_rekomen'] = fuzz.trimf(keputusan_investasi.universe, [7, 8.5, 10])    
 
 #rules lek disini ada berapa terserah dah
-rule1 = ctrl.Rule(stabilitas['low'] & popularitas['high'] & potensi_keuntungan['high'], keputusan_investasi['highly_recommended']) #rule 1 ini kalo stabilitas low, popularitas high, potential gain high maka investment decision highly recommended
-rule2 = ctrl.Rule(stabilitas['medium'] & popularitas['medium'] & potensi_keuntungan['medium'], keputusan_investasi['recommended']) #rule 2 ini kalo stabilitas medium, popularitas medium, potential gain medium maka investment decision recommended
-rule3 = ctrl.Rule(stabilitas['high'] | popularitas['low'] | potensi_keuntungan['low'], keputusan_investasi['not_recommended']) #rule 3 ini kalo stabilitas high atau popularitas low atau potential gain low maka investment decision not recommended
-rule4 = ctrl.Rule(stabilitas['low'] & popularitas['low'] & potensi_keuntungan['low'], keputusan_investasi['not_recommended']) #rule 4 ini kalo stabilitas low dan popularitas low dan potential gain low maka investment decision not recommended 
+rule1 = ctrl.Rule(stabilitas['tidak'] & popularitas['tinggi'] & potensi_keuntungan['banyak'], keputusan_investasi['rekomen']) #rule 1 ini kalo stabilitas low, popularitas high, potential gain high maka investment decision highly recommended
+rule2 = ctrl.Rule(stabilitas['sedang'] & popularitas['sedang'] & potensi_keuntungan['sedang'], keputusan_investasi['rekomen']) #rule 2 ini kalo stabilitas medium, popularitas medium, potential gain medium maka investment decision recommended
+rule3 = ctrl.Rule(stabilitas['sangat'] | popularitas['rendah'] | potensi_keuntungan['dikit'], keputusan_investasi['tidak_rekomen']) #rule 3 ini kalo stabilitas high atau popularitas low atau potential gain low maka investment decision not recommended
+rule4 = ctrl.Rule(stabilitas['sangat'] & popularitas['tinggi'] & potensi_keuntungan['banyak'], keputusan_investasi['sangat_rekomen']) #rule 4 ini kalo stabilitas low dan popularitas low dan potential gain low maka investment decision not recommended 
 
 keputusan = ctrl.ControlSystem([rule1, rule2, rule3, rule4]) #ini buat ngegabungin rule rule diatas
 hasil_sim = ctrl.ControlSystemSimulation(keputusan) #ini buat ngejalanin rule rule diatas biar bisa dihitung hasilnya 
 
+print(keputusan_investasi)
+print(keputusan_investasi.terms)
 #GUInya
 def hitung():
-    vol = float(stabilitas_entry.get()) #ini buat ngambil nilai dari inputan stabilitas
-    pop = float(popularitas_entry.get()) #ini buat ngambil nilai dari inputan popularitas
-    gain = float(potensi_keuntungan_entry.get()) #ini buat ngambil nilai dari inputan potential gain
+    vol = float(stabilitas_entry.get())
+    pop = float(popularitas_entry.get())
+    gain = float(potensi_keuntungan_entry.get())
 
-    hasil_sim.input['popularitas'] = pop #ini buat ngasih nilai inputan ke popularitas
-    hasil_sim.input['stabilitas'] = vol #ini buat ngasih nilai inputan ke stabilitas
-    hasil_sim.input['potensi_keuntungan'] = gain #ini buat ngasih nilai inputan ke potential gain
+    # Masukkan input
+    hasil_sim.input['popularitas'] = pop
+    hasil_sim.input['stabilitas'] = vol
+    hasil_sim.input['potensi_keuntungan'] = gain
 
-    hasil_sim.compute() #ini buat ngitung hasilnya
-    keputusan_investasi = hasil_sim.output['keputusan_investasi'] #ini buat ngambil hasilnya
+    # Debugging setelah compute
+    print("Output setelah compute:", hasil_sim.output)
 
-    if keputusan_investasi >= 5:
-        result.set(f"Hasil: {hasil_sim.output['keputusan_investasi']:.2f} (Not Recommended)")
-    elif keputusan_investasi < 8:
-        result.set(f"Hasil: {hasil_sim.output['keputusan_investasi']:.2f} (Recommended)")
+    hasil_keputusan = hasil_sim.output['keputusan_investasi']
+
+    if hasil_keputusan <= 3:
+        result.set(f"Hasil: {hasil_keputusan:.2f} (tidak rekomen)")
+    elif hasil_keputusan <= 6:
+        result.set(f"Hasil: {hasil_keputusan:.2f} (rekomen)")
     else:
-        result.set(f"Hasil: {hasil_sim.output['keputusan_investasi']:.2f} (Highly Recommended)")
-    
+        result.set(f"Hasil: {hasil_keputusan:.2f} (sangat amat rekomen)")
     #result.set(f"Hasil: {hasil_sim.output['keputusan_investasi']:.2f}") #ini buat nampilin hasilnya
          
 
